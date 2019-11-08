@@ -6,15 +6,23 @@
  * User Manual available at https://docs.gradle.org/5.6.4/userguide/java_library_plugin.html
  */
 
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    google()
+    jcenter()
+}
+
 plugins {
+    // Apply the application plugin to add support for Main class
+    application
+
     // Apply the java-library plugin to add support for Java Library
     `java-library`
 }
 
-repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+application {
+    mainClassName = "app.btcore.java.Bitcapital"
 }
 
 dependencies {
@@ -24,9 +32,17 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation("com.google.guava:guava:28.0-jre")
 
+    // We use GSON for serialization
+    implementation("com.google.code.gson:gson:2.8.6")
+
+    // We use Retrofit for our HTTP requests
+    implementation("com.squareup.retrofit2:retrofit:2.6.2")
+    implementation("com.squareup.retrofit2:converter-gson:2.6.2")
+
     // Use JUnit test framework
     testImplementation("junit:junit:4.12")
 }
+
 
 tasks {
     test {
