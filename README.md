@@ -17,6 +17,24 @@ OAuthTokenResponse credentials = bitcapital.oauth().token()
 System.out.println(credentials.accessToken);
 ```
 
+## Request Signing
+
+To generate a Request Signature using HMAC SHA256.
+
+```java
+String method = request.method().toUpperCase();
+String url = "/" + String.join("/", request.url().pathSegments());
+String body = null;
+
+if ((method.equals("POST") || method.equals("PUT")) && request.body() != null) {
+    body = this.bodyToString(request.body());
+}
+
+long now = System.currentTimeMillis();
+String signature = new RequestSigning().sign(bitcapital.getClientSecret(), method, url, body, now);
+```
+
+
 ## Development
 
 Compile and run tests using Gradle:
