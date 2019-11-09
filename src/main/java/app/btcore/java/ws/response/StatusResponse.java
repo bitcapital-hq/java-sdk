@@ -1,4 +1,4 @@
-package app.btcore.java.response;
+package app.btcore.java.ws.response;
 
 public class StatusResponse {
   public String name;

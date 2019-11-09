@@ -7,15 +7,27 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.security.InvalidKeyException;
+import java.util.Date;
 
 public class RequestSigningTest {
   @Test
-  public void testSimpleSignMethod() {
+  public void testRawSignMethod() {
     RequestSigning classUnderTest = new RequestSigning();
     try {
-      String result = classUnderTest.sign("test", "test");
-      System.out.println(result);
+      String result = classUnderTest.raw("test", "test");
       assertEquals("should sign a simple string", result, "88cd2108b5347d973cf39cdf9053d7dd42704876d8c9a9bd8e2d168259d3ddf7");
+    } catch (InvalidKeyException exception) {
+      fail(exception.getMessage());
+    }
+  }
+
+  @Test
+  public void testSignMethod() {
+    RequestSigning classUnderTest = new RequestSigning();
+    try {
+      long timestamp = 1573264495581L;
+      String result = classUnderTest.sign("root", "POST", "/payments", "{}", timestamp);
+      assertEquals("should sign a simple string", result, "3e3e70e7904f7c99f999e519d950bf4a3d6807a70bdfe3be36e58f4966e14bb3");
     } catch (InvalidKeyException exception) {
       fail(exception.getMessage());
     }

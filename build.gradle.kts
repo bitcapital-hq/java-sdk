@@ -11,6 +11,7 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     google()
     jcenter()
+    mavenCentral()
 }
 
 plugins {
@@ -22,7 +23,7 @@ plugins {
 }
 
 application {
-    mainClassName = "app.btcore.java.Bitcapital"
+    mainClassName = "app.btcore.java.MainApplication"
 }
 
 dependencies {
@@ -36,8 +37,13 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
 
     // We use Retrofit for our HTTP requests
-    implementation("com.squareup.retrofit2:retrofit:2.6.2")
-    implementation("com.squareup.retrofit2:converter-gson:2.6.2")
+    compile("com.squareup.okhttp3:okhttp:3.14.4")
+    implementation("com.squareup.retrofit2:retrofit:2.6.2") {
+        exclude(module = "okhttp")
+    }
+    implementation("com.squareup.retrofit2:converter-gson:2.6.2") {
+        exclude(module = "gson")
+    }
 
     // Use JUnit test framework
     testImplementation("junit:junit:4.12")

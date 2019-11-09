@@ -3,51 +3,72 @@
  */
 package app.btcore.java;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestSigning {
     private static final char[] digits = "0123456789ABCDEF".toCharArray();
 
-    public String sign(String content, String key) throws InvalidKeyException {
+    public String sign(String secret, String method, String url) throws InvalidKeyException {
+        return this.sign(secret, method, url, null, System.currentTimeMillis());
+    }
+
+    public String sign(String secret, String method, String url, String body) throws InvalidKeyException {
+        return this.sign(secret, method, url, body, System.currentTimeMillis());
+    }
+
+    public String sign(String secret, String method, String url, String body, long timestamp) throws InvalidKeyException {
+        List<String> segments = new ArrayList<>();
+
+        segments.add(method);
+        segments.add(url);
+        segments.add(String.valueOf(timestamp));
+
+        if (body != null && body.length() > 0) {
+            segments.add(body);
+        }
+
+        return this.raw(secret, String.join(",", segments));
+    }
+
+    public String raw(String key, String content) throws InvalidKeyException {
         String algorithm = "HmacSHA256";
 
         try {
-            return this.sign(content, key, algorithm);
-        } catch (NoSuchAlgorithmException exception) {
-            // Algorithm is not available, maybe we should crash
-            throw new RuntimeException(exception);
-        } catch(UnsupportedEncodingException exception) {
-            // Encoding is not availabe, maybe we should crash
+            return this.generateSignature(content, key, algorithm);
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException exception) {
+            // Algorithm or encoding is not available, maybe we should crash
             throw new RuntimeException(exception);
         }
     }
 
-    public static final String bytesToHex(final byte[] bytes) {
+    private static String bytesToHex(final byte[] bytes) {
         final StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
-            buf.append(RequestSigning.digits[(bytes[i] >> 4) & 0x0f]);
-            buf.append(RequestSigning.digits[bytes[i] & 0x0f]);
+        for (byte aByte : bytes) {
+            buf.append(RequestSigning.digits[(aByte >> 4) & 0x0f]);
+            buf.append(RequestSigning.digits[aByte & 0x0f]);
         }
         return buf.toString();
     }
 
-    public String sign(String content, String key, String algorithm)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
+    protected String generateSignature(String content, String key, String algorithm)
+        throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
         // 1. Get an algorithm instance.
         Mac sha256_hmac = Mac.getInstance(algorithm);
 
         // 2. Create secret key.
-        SecretKeySpec secret_key = new SecretKeySpec(key.getBytes("UTF-8"), algorithm);
+        SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm);
 
         // 3. Assign secret key algorithm.
         sha256_hmac.init(secret_key);
 
         // You can use any other encoding format to get hash text in that encoding.
-        return RequestSigning.bytesToHex(sha256_hmac.doFinal(content.getBytes("UTF-8"))).toLowerCase();
+        return RequestSigning.bytesToHex(sha256_hmac.doFinal(content.getBytes(StandardCharsets.UTF_8))).toLowerCase();
     }
 }
