@@ -1,6 +1,10 @@
 bitcapital-java-sdk
 ===================
 
+**ALPHA NOTICE:** This SDK is considered experimental and may lack features and support from the other official SDKs.  
+
+<br />
+
 ## Getting Started
 
 Initialize your Bit Capital client.
@@ -81,6 +85,8 @@ Then start the scripts using gradle:
 ./gradlew run
 ```
 
+<br />
+
 ## Request Signing
 
 The Bitcapital SDK handles automatically the request signature when the OkHttp client is used. 
@@ -114,3 +120,28 @@ Execute sample routine from main class.
 ```bash
 ./gradlew run
 ```
+
+## Roadmap
+
+- [x] Base SDK
+    - [x] Bitcapital singleton wrapper
+    - [x] OkHttp initialization
+    - [x] Retrofit initialization
+    - [x] Server status requests
+
+- [x] Request Signing
+    - [x] Base request signing request
+    - [x] OkHttp signing interceptor 
+
+- [x] Rest API    
+    - [x] Calling API using hashmaps
+    - [x] Calling API using Gson classes
+    - [x] Calling API using Retrofit interfaces
+
+- [ ] OAuth 2.0
+    - [x] Client credentials grant type
+    - [x] Password grant type
+    - [x] OkHttp bearer credentials interceptor
+    - [ ] Refresh token grant type
+    - [ ] OkHttp refresh token interceptor
+    - [ ] Secret token grant type  
