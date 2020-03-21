@@ -148,11 +148,8 @@ Execute sample routine from main class.
 <br />
 
 - [ ] OAuth 2.0
-    - [x] Client credentials grant type
-    - [x] Password grant type
+    - [x] Credential request (/oauth/token)
     - [x] OkHttp bearer credentials interceptor
-    - [ ] Refresh token grant type
     - [ ] OkHttp refresh token interceptor
-    - [ ] Secret token grant type  
 
 <br />
