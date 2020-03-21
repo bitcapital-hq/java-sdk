@@ -3,11 +3,11 @@
  */
 package app.btcore.java;
 
+import app.btcore.java.signing.RequestSigning;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.security.InvalidKeyException;
-import java.util.Date;
 
 public class RequestSigningTest {
   @Test

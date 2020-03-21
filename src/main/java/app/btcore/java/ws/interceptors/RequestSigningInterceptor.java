@@ -1,7 +1,7 @@
 package app.btcore.java.ws.interceptors;
 
 import app.btcore.java.Bitcapital;
-import app.btcore.java.RequestSigning;
+import app.btcore.java.signing.RequestSigning;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -10,7 +10,6 @@ import okio.Buffer;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.util.Date;
 
 public class RequestSigningInterceptor implements Interceptor {
     private final Bitcapital bitcapital;

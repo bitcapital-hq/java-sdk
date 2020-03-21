@@ -27,16 +27,16 @@ application {
 }
 
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
     api("org.apache.commons:commons-math3:3.6.1")
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation("com.google.guava:guava:28.0-jre")
 
-    // We use GSON for serialization
+    // Adds GSON for request and response serialization
     implementation("com.google.code.gson:gson:2.8.6")
 
-    // We use Retrofit for our HTTP requests
+    // Adds support for dotenv configuration files
+    implementation("io.github.cdimascio:java-dotenv:5.1.3")
+
+    // Adds OkHttp and Retrofit for our HTTP requests
     compile("com.squareup.okhttp3:okhttp:3.14.4")
     implementation("com.squareup.retrofit2:retrofit:2.6.2") {
         exclude(module = "okhttp")
@@ -45,7 +45,6 @@ dependencies {
         exclude(module = "gson")
     }
 
-    // Use JUnit test framework
     testImplementation("junit:junit:4.12")
 }
 

@@ -1,64 +1,39 @@
 package app.btcore.java;
 
 import app.btcore.java.ws.OAuthWebService;
-import app.btcore.java.ws.PaymentWebService;
 import app.btcore.java.ws.StatusWebService;
-import app.btcore.java.ws.UserWebService;
-import app.btcore.java.ws.interceptors.HttpLoggingInterceptor;
-import app.btcore.java.ws.interceptors.OAuthTokenInterceptor;
-import app.btcore.java.ws.interceptors.RequestSigningInterceptor;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.util.Base64;
 
+/**
+ * The main Bit Capital SDK service, wraps all available APIs and utilities.
+ */
 public final class Bitcapital {
+    /* Internal Retrofit web services */
     private final StatusWebService statusAPI;
     private final OAuthWebService oauthAPI;
-    private final UserWebService userAPI;
-    private final PaymentWebService paymentAPI;
 
+    /* Internal properties */
     protected final String apiUrl;
     protected final String clientId;
     protected final String clientSecret;
-    protected final OAuthTokenInterceptor authorizationHeaderInterceptor;
-    protected final RequestSigningInterceptor signatureHeaderInterceptor;
+    protected final BitcapitalClient client;
 
     private Bitcapital(String apiUrl, String clientId, String clientSecret) {
         this.apiUrl = apiUrl;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.authorizationHeaderInterceptor = new OAuthTokenInterceptor();
-        this.signatureHeaderInterceptor = new RequestSigningInterceptor(this);
-
-        // Prepare the request logging
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-
-        // Create the OK Http client for request interception
-        OkHttpClient defaultHttpClient = new OkHttpClient.Builder()
-            .addInterceptor(this.authorizationHeaderInterceptor)
-            .addInterceptor(this.signatureHeaderInterceptor)
-            .addInterceptor(logging)
-            .build();
-
-        // Create a very simple REST adapter which points the Bit Capital APIs
-        Retrofit retrofit = new Retrofit.Builder()
-            .client(defaultHttpClient)
-            .baseUrl(this.apiUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+        this.client = new BitcapitalClient(this, false);
 
         // Create the instances of our API interfaces
-        this.statusAPI = retrofit.create(StatusWebService.class);
-        this.oauthAPI = retrofit.create(OAuthWebService.class);
-        this.userAPI = retrofit.create(UserWebService.class);
-        this.paymentAPI = retrofit.create(PaymentWebService.class);
+        this.statusAPI = this.client.retrofit(StatusWebService.class);
+        this.oauthAPI = this.client.retrofit(OAuthWebService.class);
     }
 
     /**
      * Initializes the Bit Capital SDK instance.
+     * <p>
+     * You'll need to supply a valid set of OAuth 2.0 credentials, and the API Url to be used in the requests.
      *
      * @param apiUrl       The instance url for API calls
      * @param clientId     The OAuth 2.0 client ID
@@ -71,12 +46,17 @@ public final class Bitcapital {
     /**
      * Gets current Basic token for OAuth 2.0 authorizations.
      *
-     * @return
+     * @return The currently configured OAuth 2.0 Basic Credential for authenticated requests.
      */
     public String getBasicToken() {
         return Base64.getEncoder().encodeToString((this.clientId + ":" + this.clientSecret).getBytes());
     }
 
+    /**
+     * Gets the base API URL for the requests.
+     *
+     * @return The API URL configured in the `initialize()` method.
+     */
     public String getApiUrl() {
         return apiUrl;
     }
@@ -99,7 +79,16 @@ public final class Bitcapital {
      * Sets current Bearer token for authenticated calls, or use "null" for no authentication.
      */
     public void setBearerToken(String bearerToken) {
-        this.authorizationHeaderInterceptor.setAuthorizationHeader("Bearer " + bearerToken);
+        this.client.setBearerToken(bearerToken);
+    }
+
+    /**
+     * Gets the current OkHttp client instance.
+     *
+     * @return The OkHttp client instance.
+     */
+    public BitcapitalClient getClient() {
+        return client;
     }
 
     /**
@@ -116,17 +105,5 @@ public final class Bitcapital {
         return this.oauthAPI;
     }
 
-    /**
-     * Gets the Users web service instance.
-     */
-    public UserWebService users() {
-        return this.userAPI;
-    }
 
-    /**
-     * Gets the Payment web service instance.
-     */
-    public PaymentWebService payments() {
-        return this.paymentAPI;
-    }
 }

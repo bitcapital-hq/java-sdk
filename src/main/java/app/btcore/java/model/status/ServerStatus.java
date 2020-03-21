@@ -1,6 +1,6 @@
-package app.btcore.java.ws.response;
+package app.btcore.java.model.status;
 
-public class StatusResponse {
+public class ServerStatus {
   public String name;
   public String version;
   public String env;

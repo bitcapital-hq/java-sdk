@@ -1,60 +1,43 @@
 package app.btcore.java;
 
-import app.btcore.java.ws.model.TransactionModel;
-import app.btcore.java.ws.model.UserModel;
-import app.btcore.java.ws.model.WalletModel;
-import app.btcore.java.ws.request.PaymentRecipientRequest;
-import app.btcore.java.ws.request.PaymentRequest;
-import app.btcore.java.ws.response.OAuthTokenResponse;
-import app.btcore.java.ws.response.StatusResponse;
+import app.btcore.java.model.OAuthCredentials;
+import app.btcore.java.samples.SampleCurrentStatus;
+import app.btcore.java.samples.SampleCurrentUser;
+import io.github.cdimascio.dotenv.Dotenv;
 import retrofit2.Response;
 
 import java.io.IOException;
 
 public class MainApplication {
-    public static final String API_URL = "https://testnet.btcore.app";
-    public static final String CLIENT_ID = "sample_client_id";
-    public static final String CLIENT_SECRET = "sample_client_secret";
-    public static final String EMAIL = "user@company.com";
-    public static final String PASSWORD = "123456";
-    public static final String SOURCE_WALLET = "sample_wallet_id_with_enough_balance";
+
+    public static final Dotenv dotenv = Dotenv.load();
 
     public static void main(String... args) throws IOException {
-        Bitcapital bitcapital = Bitcapital.initialize(MainApplication.API_URL, MainApplication.CLIENT_ID, MainApplication.CLIENT_SECRET);
+        String apiUrl = MainApplication.dotenv.get("BITCAPITAL_URL");
+        String clientId = MainApplication.dotenv.get("BITCAPITAL_CLIENT_ID");
+        String clientSecret = MainApplication.dotenv.get("BITCAPITAL_CLIENT_SECRET");
+        Bitcapital bitcapital = Bitcapital.initialize(apiUrl, clientId, clientSecret);
 
-        MainApplication.getCurrentStatus(bitcapital);
+        // Ensure server is online and reachable
+        SampleCurrentStatus.getCurrentStatus(bitcapital);
 
-        boolean isAuthenticated = MainApplication.authenticate(bitcapital);
+        // Authenticate using supplied credentials
+        MainApplication.authenticate(bitcapital);
 
-        if (isAuthenticated) {
-            String recipientWalletId = MainApplication.getCurrentUser(bitcapital);
+        // Perform a simple API call
+        SampleCurrentUser.getCurrentUser(bitcapital);
 
-            if (recipientWalletId != null) {
-                boolean result = MainApplication.samplePayment(bitcapital, recipientWalletId);
-
-                if (result) {
-                    System.exit(0);
-                }
-            }
-        }
-
-        System.exit(1);
-    }
-
-    private static void getCurrentStatus(Bitcapital bitcapital) throws IOException {
-        StatusResponse currentStatus = bitcapital.status().current().execute().body();
-
-        // Print basic API status
-        System.out.println("\nStarting sample script for Bit Capital APIs...\n");
-        System.out.println("- API URL: " + MainApplication.API_URL);
-        System.out.println("- API Version: " + currentStatus.name + ":" + currentStatus.version + "\n");
+        System.exit(0);
     }
 
     private static boolean authenticate(Bitcapital bitcapital) throws IOException {
-        Response<OAuthTokenResponse> currentTokenCall = bitcapital.oauth().token(
+        String email = MainApplication.dotenv.get("BITCAPITAL_EMAIL");
+        String password = MainApplication.dotenv.get("BITCAPITAL_PASSWORD");
+
+        Response<OAuthCredentials> currentTokenCall = bitcapital.oauth().token(
             "Basic " + bitcapital.getBasicToken(),
-            MainApplication.EMAIL,
-            MainApplication.PASSWORD,
+            email,
+            password,
             null,
             "password"
         ).execute();
@@ -65,7 +48,7 @@ public class MainApplication {
         } else {
             // Print OAuth 2.0 credentials
             System.out.println("\nAuthenticated successfully: \n");
-            OAuthTokenResponse currentToken = currentTokenCall.body();
+            OAuthCredentials currentToken = currentTokenCall.body();
             System.out.println("- Access Token: " + currentToken.accessToken);
             System.out.println("- Refresh Token: " + currentToken.refreshToken);
             System.out.println("- Expires In (seconds): " + currentToken.expiresIn);
@@ -76,56 +59,12 @@ public class MainApplication {
         }
     }
 
-    private static String getCurrentUser(Bitcapital bitcapital) throws IOException {
-        Response<UserModel> currentUserCall = bitcapital.users().me().execute();
-
-        if (!currentUserCall.isSuccessful()) {
-            MainApplication.handleError(currentUserCall);
-            return null;
-        } else {
-            System.out.println("\nCurrent user information: \n");
-
-            UserModel user = currentUserCall.body();
-            System.out.println("- ID: " + user.id);
-            System.out.println("- Name: " + user.name);
-            System.out.println("- Role: " + user.role);
-            System.out.println("- Status: " + user.status);
-            System.out.println("- Wallets: " + user.role);
-
-            String firstWalletId = null;
-
-            for (WalletModel wallet : user.wallets) {
-                if (firstWalletId == null) {
-                    firstWalletId = wallet.id;
-                }
-                System.out.println("  > ID: " + wallet.id);
-                System.out.println("    Status: " + wallet.status);
-                System.out.println("    Public Key: " + wallet.stellar.publicKey);
-            }
-
-            return firstWalletId;
-        }
-    }
-
-    private static boolean samplePayment(Bitcapital bitcapital, String recipientWalletId) throws IOException {
-        PaymentRecipientRequest[] recipients = {new PaymentRecipientRequest("1.00", recipientWalletId)};
-        PaymentRequest request = new PaymentRequest(MainApplication.SOURCE_WALLET, recipients);
-        Response<TransactionModel> samplePaymentCall = bitcapital.payments().pay(request).execute();
-
-        if (!samplePaymentCall.isSuccessful()) {
-            MainApplication.handleError(samplePaymentCall);
-            return false;
-        } else {
-            TransactionModel transaction = samplePaymentCall.body();
-            System.out.println("- ID: " + transaction.id);
-            return true;
-        }
-    }
-
     private static <T> void handleError(Response<T> response) {
-        System.out.println("\nERROR: " + response.code());
+        System.out.println("\nERROR [" + response.code() + "] " + response.message());
         try {
-            System.out.println(response.errorBody().string());
+            if (response.errorBody() != null) {
+                System.out.println(response.errorBody().string());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

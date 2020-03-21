@@ -1,4 +1,4 @@
-package app.btcore.java.ws.model;
+package app.btcore.java.model;
 
 import java.util.Date;
 
