@@ -10,12 +10,14 @@ Initialize your Bit Capital client.
 Bitcapital bitcapital = Bitcapital.initialize(apiUrl, clientId, clientSecret);
 
 // Authenticate using OAuth 2.0
-OAuthTokenResponse credentials = bitcapital.oauth().token()
+OAuthCredentials credentials = bitcapital.oauth().token()
     .execute()
     .body();
 
 System.out.println(credentials.accessToken);
 ```
+
+<br />
 
 ## API Requests
 
@@ -64,9 +66,20 @@ StatusWebService ws = bitcapital.getClient().retrofit(StatusWebService.class);
 ServerStatus status = ws.status().execute();
 ```
 
-
-
 The SDK uses the Gson library under the hood, if you need additional information check the `bitcapital.getClient()` instance.
+
+<br />
+
+## Sample Scripts
+
+The repository comes with a set of sample routines to test the SDK and validate your set of credentials. Start by copying
+the `.env.sample` file in the root as `.env` and inputting your credentials.
+
+Then start the scripts using gradle:
+
+```bash
+./gradlew run
+```
 
 ## Request Signing
 
@@ -86,6 +99,7 @@ long now = System.currentTimeMillis();
 String signature = new RequestSigning().sign(bitcapital.getClientSecret(), method, url, body, now);
 ```
 
+<br />
 
 ## Development
 
