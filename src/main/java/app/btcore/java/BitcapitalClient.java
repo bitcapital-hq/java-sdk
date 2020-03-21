@@ -91,7 +91,6 @@ public class BitcapitalClient {
             .build();
 
         okhttp3.Response response = this.client.newCall(req).execute();
-        GsonBuilder builder = new GsonBuilder();
 
         if (response.body() != null) {
             return new Gson().fromJson(response.body().string(), cls);
@@ -101,14 +100,13 @@ public class BitcapitalClient {
     }
 
     @Nullable
-    public <T> T post(String path, Class<T> cls, RequestBody body) throws IOException {
+    public <T> T post(String path, RequestBody body, Class<T> cls) throws IOException {
         Request req = new Request.Builder()
             .post(body)
             .url(this.getFullUrl(path))
             .build();
 
         okhttp3.Response response = this.client.newCall(req).execute();
-        GsonBuilder builder = new GsonBuilder();
 
         if (response.body() != null) {
             return new Gson().fromJson(response.body().string(), cls);
@@ -118,14 +116,13 @@ public class BitcapitalClient {
     }
 
     @Nullable
-    public <T> T put(String path, Class<T> cls, RequestBody body) throws IOException {
+    public <T> T put(String path, RequestBody body, Class<T> cls) throws IOException {
         Request req = new Request.Builder()
             .put(body)
             .url(this.getFullUrl(path))
             .build();
 
         okhttp3.Response response = this.client.newCall(req).execute();
-        GsonBuilder builder = new GsonBuilder();
 
         if (response.body() != null) {
             return new Gson().fromJson(response.body().string(), cls);
@@ -142,7 +139,6 @@ public class BitcapitalClient {
             .build();
 
         okhttp3.Response response = this.client.newCall(req).execute();
-        GsonBuilder builder = new GsonBuilder();
 
         if (response.body() != null) {
             return new Gson().fromJson(response.body().string(), cls);

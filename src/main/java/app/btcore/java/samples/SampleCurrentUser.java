@@ -7,17 +7,18 @@ import java.io.IOException;
 
 public class SampleCurrentUser {
 
-    public static void getCurrentUser(Bitcapital bitcapital) throws IOException {
+    public static UserModel getCurrentUser(Bitcapital bitcapital) throws IOException {
+        System.out.println("\nFetching current user from Bit Capital APIs...\n");
         UserModel user = bitcapital.getClient().get("/users/me", UserModel.class);
 
         if (user != null) {
             // Print basic API status
-            System.out.println("\nStarting sample script for Bit Capital APIs...\n");
             System.out.println("- User ID: " + user.id);
             System.out.println("- User Name: " + user.name);
             System.out.println("- User Role: " + user.role);
             System.out.println("- User Status: " + user.status);
-            System.out.println("\n");
         }
+
+        return user;
     }
 }

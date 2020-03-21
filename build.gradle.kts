@@ -56,3 +56,7 @@ tasks {
         }
     }
 }
+
+val run by tasks.getting(JavaExec::class) {
+    standardInput = System.`in`
+}

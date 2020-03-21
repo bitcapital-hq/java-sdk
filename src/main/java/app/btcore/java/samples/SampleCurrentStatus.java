@@ -10,13 +10,13 @@ import java.io.IOException;
 public class SampleCurrentStatus {
 
     public static void getCurrentStatus(Bitcapital bitcapital) throws IOException {
+        System.out.println("\nFetching current server status from Bit Capital APIs...\n");
         ServerStatus currentStatus = bitcapital.status().current().execute().body();
 
         if (currentStatus != null) {
             // Print basic API status
-            System.out.println("\nStarting sample script for Bit Capital APIs...\n");
             System.out.println("- API URL: " + bitcapital.getApiUrl());
-            System.out.println("- API Version: " + currentStatus.name + ":" + currentStatus.version + "\n");
+            System.out.println("- API Version: " + currentStatus.name + ":" + currentStatus.version);
         }
     }
 }

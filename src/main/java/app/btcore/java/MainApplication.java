@@ -1,12 +1,18 @@
 package app.btcore.java;
 
 import app.btcore.java.model.OAuthCredentials;
+import app.btcore.java.model.TransactionModel;
+import app.btcore.java.model.UserModel;
+import app.btcore.java.model.WalletModel;
 import app.btcore.java.samples.SampleCurrentStatus;
 import app.btcore.java.samples.SampleCurrentUser;
+import app.btcore.java.samples.SamplePayment;
 import io.github.cdimascio.dotenv.Dotenv;
 import retrofit2.Response;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MainApplication {
 
@@ -18,15 +24,30 @@ public class MainApplication {
         String clientSecret = MainApplication.dotenv.get("BITCAPITAL_CLIENT_SECRET");
         Bitcapital bitcapital = Bitcapital.initialize(apiUrl, clientId, clientSecret);
 
+        System.out.println("Starting sample scripts...");
+
         // Ensure server is online and reachable
         SampleCurrentStatus.getCurrentStatus(bitcapital);
 
         // Authenticate using supplied credentials
         MainApplication.authenticate(bitcapital);
 
-        // Perform a simple API call
-        SampleCurrentUser.getCurrentUser(bitcapital);
+        // Get current user information
+        UserModel user = SampleCurrentUser.getCurrentUser(bitcapital);
 
+        // Get current wallet information
+        WalletModel wallet = SamplePayment.getUserBalance(bitcapital, user);
+
+        // Ask for a destination wallet so we can test some payments
+        System.out.println("\n\nInput the Wallet ID to start sample emission:\n");
+        InputStreamReader converter = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(converter);
+        String walletId = in.readLine();
+
+        // Emit assets to specified wallet
+        TransactionModel transaction = SamplePayment.sampleAssetEmission(bitcapital, walletId);
+
+        System.out.println("\n");
         System.exit(0);
     }
 

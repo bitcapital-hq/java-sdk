@@ -4,6 +4,8 @@ import app.btcore.java.model.role.UserRole;
 import app.btcore.java.model.states.BaseStatefulModel;
 import app.btcore.java.model.status.UserStatus;
 
+import java.util.List;
+
 public class UserModel extends BaseStatefulModel<UserStatus> {
 
     public String name;
@@ -15,4 +17,7 @@ public class UserModel extends BaseStatefulModel<UserStatus> {
     public String email;
 
     public UserRole role;
+
+    public List<WalletModel> wallets;
 }
+
