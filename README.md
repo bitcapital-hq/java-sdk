@@ -125,20 +125,27 @@ Execute sample routine from main class.
 
 ## Roadmap
 
+<br />
+
 - [x] Base SDK
     - [x] Bitcapital singleton wrapper
     - [x] OkHttp initialization
     - [x] Retrofit initialization
     - [x] Server status requests
+   
+<br />
 
 - [x] Request Signing
     - [x] Base request signing request
-    - [x] OkHttp signing interceptor 
+    - [x] OkHttp signing interceptor
+<br /> 
 
 - [x] Rest API    
     - [x] Calling API using hashmaps
     - [x] Calling API using Gson classes
     - [x] Calling API using Retrofit interfaces
+
+<br />
 
 - [ ] OAuth 2.0
     - [x] Client credentials grant type
@@ -147,3 +154,5 @@ Execute sample routine from main class.
     - [ ] Refresh token grant type
     - [ ] OkHttp refresh token interceptor
     - [ ] Secret token grant type  
+
+<br />
