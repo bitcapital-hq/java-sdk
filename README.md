@@ -90,8 +90,9 @@ Then start the scripts using gradle:
 
 ## Request Signing
 
-The Bitcapital SDK handles automatically the request signature when the OkHttp client is used. 
-To generate a Request Signature manually using HMAC SHA256.
+The Bitcapital SDK handles automatically the request signature when the OkHttp client is used in requests from the `bitcapital.getClient()` method.
+
+To generate a Request Signature manually using HMAC SHA256, you can use the `RequestSigning` class, although the official recommendation is to let the SDK deal with authentication and signing for the requests.
 
 ```java
 String method = request.method().toUpperCase();
