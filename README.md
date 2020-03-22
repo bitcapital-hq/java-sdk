@@ -43,7 +43,7 @@ if (user != null) {
 
 #### Calling the API directly using Java models
 
-Fetch the currently authenticated user through the API using a POJO model. The SDK uses the [Gson library](https://github.com/google/gson) under the hoo for handling JSON objects, if you need additional information check the `bitcapital.getClient()` instance.
+Fetch the currently authenticated user through the API using a POJO model. The SDK uses the [Gson library](https://github.com/google/gson) under the hood for handling JSON objects.
 
 ```java
 // You can use one of the built-in models or write your own
@@ -68,6 +68,7 @@ public interface StatusWebService {
 }
 
 // Register the template in the Bitcapital OkHttp client and request the resource from the API
+// Uses the `retrofit.create(Class<T> cls)` method to bind to current OkHttp client instance
 StatusWebService ws = bitcapital.getClient().retrofit(StatusWebService.class);
 ServerStatus status = ws.status().execute();
 ```
