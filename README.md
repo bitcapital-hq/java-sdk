@@ -25,7 +25,7 @@ System.out.println(credentials.accessToken);
 
 ## API Requests
 
-The Bitcapital Java SDK aims to be a thin layer over OkHttp client, so you can manipulate and intercept the requests.
+The Bitcapital Java SDK aims to be a thin layer over the [OkHttp Client](https://square.github.io/okhttp), so you can manipulate and intercept the requests.
  To request a resource from the API you can use one of 3 methods: 
 
 #### TLDR: Calling the API directly
@@ -43,7 +43,7 @@ if (user != null) {
 
 #### Calling the API directly using Java models
 
-Fetch the currently authenticated user through the API using a POJO model.
+Fetch the currently authenticated user through the API using a POJO model. The SDK uses the [Gson library](https://github.com/google/gson) under the hoo for handling JSON objects, if you need additional information check the `bitcapital.getClient()` instance.
 
 ```java
 // You can use one of the built-in models or write your own
@@ -55,6 +55,8 @@ if (user != null) {
 ```
 
 #### Mapping the API endpoints using Retrofit templates
+
+The SDK supports [Retrofit](https://square.github.io/retrofit) templates out-of-the box.
 
 ```java
 // Maps the API endpoints using Retrofit annotations
@@ -69,8 +71,6 @@ public interface StatusWebService {
 StatusWebService ws = bitcapital.getClient().retrofit(StatusWebService.class);
 ServerStatus status = ws.status().execute();
 ```
-
-The SDK uses the Gson library under the hood, if you need additional information check the `bitcapital.getClient()` instance.
 
 <br />
 
