@@ -25,7 +25,7 @@ System.out.println(credentials.accessToken);
 
 ## API Requests
 
-The Bitcapital Java SDK aims to be a thin layer over OkHttp client, so you can manipulate and intercept the requests.
+The Bitcapital Java SDK aims to be a thin layer over the [OkHttp Client](https://square.github.io/okhttp), so you can manipulate and intercept the requests.
  To request a resource from the API you can use one of 3 methods: 
 
 #### TLDR: Calling the API directly
@@ -43,7 +43,7 @@ if (user != null) {
 
 #### Calling the API directly using Java models
 
-Fetch the currently authenticated user through the API using a POJO model.
+Fetch the currently authenticated user through the API using a POJO model. The SDK uses the [Gson library](https://github.com/google/gson) under the hood for handling JSON objects.
 
 ```java
 // You can use one of the built-in models or write your own
@@ -56,6 +56,8 @@ if (user != null) {
 
 #### Mapping the API endpoints using Retrofit templates
 
+The SDK supports [Retrofit](https://square.github.io/retrofit) templates out-of-the box.
+
 ```java
 // Maps the API endpoints using Retrofit annotations
 public interface StatusWebService {
@@ -66,11 +68,10 @@ public interface StatusWebService {
 }
 
 // Register the template in the Bitcapital OkHttp client and request the resource from the API
+// Uses the `retrofit.create(Class<T> cls)` method to bind to current OkHttp client instance
 StatusWebService ws = bitcapital.getClient().retrofit(StatusWebService.class);
 ServerStatus status = ws.status().execute();
 ```
-
-The SDK uses the Gson library under the hood, if you need additional information check the `bitcapital.getClient()` instance.
 
 <br />
 
@@ -89,8 +90,9 @@ Then start the scripts using gradle:
 
 ## Request Signing
 
-The Bitcapital SDK handles automatically the request signature when the OkHttp client is used. 
-To generate a Request Signature manually using HMAC SHA256.
+The Bitcapital SDK handles automatically the request signature when the OkHttp client is used in requests from the `bitcapital.getClient()` method.
+
+To generate a Request Signature manually using HMAC SHA256, you can use the `RequestSigning` class, although the official recommendation is to let the SDK deal with authentication and signing for the requests.
 
 ```java
 String method = request.method().toUpperCase();
