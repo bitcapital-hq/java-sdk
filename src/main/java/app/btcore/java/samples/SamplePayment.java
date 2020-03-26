@@ -10,7 +10,9 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SamplePayment {
     public static WalletModel getUserBalance(Bitcapital bitcapital, UserModel user) throws IOException {
@@ -38,21 +40,29 @@ public class SamplePayment {
         return null;
     }
 
-    public static TransactionModel sampleAssetEmission(Bitcapital bitcapital, String walletId) throws IOException {
-        HashMap<String, String> requestMap = new HashMap<>();
-        requestMap.put("destination", walletId);
-        requestMap.put("amount", "10.00");
+    public static TransactionModel sampleAssetEmission(Bitcapital bitcapital) throws IOException {
+        HashMap<String, String> recipientsMap = new HashMap<>();
+        recipientsMap.put("destination", "DESTINATION_WALLET_ID");
+        recipientsMap.put("amount", "10.00");
+        recipientsMap.put("asset", "BRLP");
+
+        List<HashMap> recipients = new ArrayList<>();
+        recipients.add(recipientsMap);
+
+        HashMap<String, Object> requestMap = new HashMap<>();
+        requestMap.put("recipients", recipients);
+        requestMap.put("source", "SOURCE_WALLET_ID");
 
         String jsonString = new Gson().toJson((requestMap));
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonString);
 
         System.out.println("\nEmitting assets to specified wallet...\n");
-        TransactionModel emission = bitcapital.getClient().post("/assets/TCN/emit", body, TransactionModel.class);
+        TransactionModel payment = bitcapital.getClient().post("/payments", body, TransactionModel.class);
 
-        if(emission != null) {
-            System.out.println("- Emission ID: " + emission.id);
+        if(payment != null) {
+            System.out.println("- P2P ID: " + payment.id);
         }
 
-        return emission;
+        return payment;
     }
 }

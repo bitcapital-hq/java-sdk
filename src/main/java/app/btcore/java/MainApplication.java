@@ -39,13 +39,13 @@ public class MainApplication {
         WalletModel wallet = SamplePayment.getUserBalance(bitcapital, user);
 
         // Ask for a destination wallet so we can test some payments
-        System.out.println("\n\nInput the Wallet ID to start sample emission:\n");
-        InputStreamReader converter = new InputStreamReader(System.in);
-        BufferedReader in = new BufferedReader(converter);
-        String walletId = in.readLine();
+//        System.out.println("\n\nInput the Wallet ID to start sample emission:\n");
+//        InputStreamReader converter = new InputStreamReader(System.in);
+//        BufferedReader in = new BufferedReader(converter);
+//        String walletId = in.readLine();
 
         // Emit assets to specified wallet
-        TransactionModel transaction = SamplePayment.sampleAssetEmission(bitcapital, walletId);
+        TransactionModel transaction = SamplePayment.sampleAssetEmission(bitcapital);
 
         System.out.println("\n");
         System.exit(0);

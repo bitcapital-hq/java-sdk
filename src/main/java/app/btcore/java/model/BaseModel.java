@@ -6,7 +6,7 @@ public class BaseModel {
 
     public String id;
 
-    public Date createdAt;
-
-    public Date updatedAt;
+//    public Date createdAt;
+//
+//    public Date updatedAt;
 }
